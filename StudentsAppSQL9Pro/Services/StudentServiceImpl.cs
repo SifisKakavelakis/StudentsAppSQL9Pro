@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using StudentsAppSQL9Pro.DAO;
 using StudentsAppSQL9Pro.DTO;
+using StudentsAppSQL9Pro.Models;
+using System.Transactions;
 
 namespace StudentsAppSQL9Pro.Services
 {
@@ -8,13 +10,36 @@ namespace StudentsAppSQL9Pro.Services
     {
         private readonly IStudentDAO _studentDAO;
         private readonly IMapper _mapper;
-        private readonly ILogger<StudentServiceImpl> _logger; 
+        private readonly ILogger<StudentServiceImpl> _logger;
 
         public StudentServiceImpl(IStudentDAO studentDAO, IMapper mapper, ILogger<StudentServiceImpl> logger)
         {
             _studentDAO = studentDAO;
             _mapper = mapper;
             _logger = logger;
+        }
+
+        public StudentReadOnlyDTO? InsertStudent(StudentReadOnlyDTO studentInsertDTO)
+        {
+            StudentReadOnlyDTO studentReadOnlyDTO;
+
+            try
+            {
+                using TransactionScope scope = new TransactionScope();
+                Student student = _mapper.Map<Student>(studentInsertDTO);
+                Student? insertedStudent = _studentDAO.Insert(student);
+                studentReadOnlyDTO = _mapper.Map<StudentReadOnlyDTO>(student);
+                _logger.LogInformation("Student {Firstname} {Lastname} inserted successfully.",
+                    studentReadOnlyDTO.Firstname, studentReadOnlyDTO.Lastname);
+                scope.Complete();
+                return studentReadOnlyDTO;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Student insertion failed for {Firstname} {Lastname}. {Errormessage}",
+                    studentInsertDTO.Firstname, studentInsertDTO.Lastname, ex.Message);
+                throw;
+            }
         }
 
         public void DeleteStudent(int id)
@@ -32,12 +57,9 @@ namespace StudentsAppSQL9Pro.Services
             throw new NotImplementedException();
         }
 
-        public StudentReadOnlyDTO? InsertStudent(StudentReadOnlyDTO studentInsertDTO)
-        {
-            throw new NotImplementedException();
-        }
 
-        public void UpdateStudents(StudentUpdateDTO studentUpdateDTO)
+
+        public void UpdateStudent(StudentUpdateDTO studentUpdateDTO)
         {
             throw new NotImplementedException();
         }

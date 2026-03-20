@@ -55,7 +55,23 @@ namespace StudentsAppSQL9Pro.Services
 
         public StudentReadOnlyDTO GetStudent(int id)
         {
-            throw new NotImplementedException();
+            StudentReadOnlyDTO studentReadOnlyDTO;
+            Student student;
+
+            try
+            {
+                student = _studentDAO.GetById(id) ??
+                    throw new StudentNotFoundException($"Student with id {id} not found.");
+                studentReadOnlyDTO = _mapper.Map<StudentReadOnlyDTO>(student);
+                _logger.LogInformation("Student with id={Id} fetced successfully.", id);
+                return studentReadOnlyDTO;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error while fetching student with id={Id} {ErrorMessage}",
+                    id, ex.Message);
+                throw;
+            }
         }
 
 

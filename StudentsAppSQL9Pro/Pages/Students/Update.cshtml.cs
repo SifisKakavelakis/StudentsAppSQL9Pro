@@ -12,18 +12,18 @@ namespace StudentsAppSQL9Pro.Pages.Students
         public StudentUpdateDTO? StudentUpdateDTO { get; set; } 
         public List<Error> ErrorArray { get; set; } = [];
 
-        private readonly IStudentService studentService;
+        private readonly IStudentService _studentService;
 
         public UpdateModel(IStudentService studentService)
         {
-            this.studentService = studentService;
+            _studentService = studentService;
         }
 
         public IActionResult OnGet(int id)
         {
             try
             {
-                StudentReadOnlyDTO? studentReadOnlyDTO = studentService.GetStudent(id);
+                StudentReadOnlyDTO? studentReadOnlyDTO = _studentService.GetStudent(id);
                 StudentUpdateDTO = new StudentUpdateDTO
                 {
                     Id = studentReadOnlyDTO.Id,
@@ -48,12 +48,10 @@ namespace StudentsAppSQL9Pro.Pages.Students
             }
             try
             {
-                //StudentUpdateDTO.Id = id;
-                
-                studentService.UpdateStudent(StudentUpdateDTO!);
-                //Response.Redirect("/Students/getall");
+                _studentService.UpdateStudent(StudentUpdateDTO!);
 
-                TempData["StudentName"] = $"Student with id {StudentUpdateDTO!.Id} was successfully updated.";
+                TempData["StudentName"] = $"Student with id {StudentUpdateDTO!.Id} " +
+                    $"was successfully updated.";
 
 
                 // PRG pattern Post-Request-Get
@@ -66,6 +64,5 @@ namespace StudentsAppSQL9Pro.Pages.Students
                 return Page();
             }
         }
-
     }
 }

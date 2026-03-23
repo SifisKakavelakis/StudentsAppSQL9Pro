@@ -11,17 +11,17 @@ namespace StudentsAppSQL9Pro.Pages.Students
         [BindProperty]
         public StudentInsertDTO StudentInsertDTO { get; set; } = new();
         public List<Error> ErrorArray { get; set; } = [];
-        
-        private readonly IStudentService studentService;
+
+        private readonly IStudentService _studentService;
 
         public CreateModel(IStudentService studentService)
         {
-            this.studentService = studentService;
+            _studentService = studentService;
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            // return Page();
+            return Page();
         }
 
         public IActionResult OnPost()
@@ -33,10 +33,10 @@ namespace StudentsAppSQL9Pro.Pages.Students
             
             try 
             {
-                StudentReadOnlyDTO? studentReadOnlyDTO = studentService.InsertStudent(StudentInsertDTO);
-                
-                TempData["StudentName"] = $"{studentReadOnlyDTO?.Firstname}, {studentReadOnlyDTO?.Lastname}" + " was successfully created.";
+                StudentReadOnlyDTO? studentReadOnlyDTO = _studentService.InsertStudent(StudentInsertDTO);
 
+                TempData["StudentName"] = $"{studentReadOnlyDTO?.Firstname}, {studentReadOnlyDTO?.Lastname}"
+                     + " was successfully created.";
                 // PRG pattern Post-Request-Get
                 return RedirectToPage("/Students/Success");
 

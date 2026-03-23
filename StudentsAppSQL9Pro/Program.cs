@@ -3,6 +3,7 @@ using Serilog.Extensions.Hosting;
 using StudentsAppSQL9Pro.Configuration;
 using StudentsAppSQL9Pro.Core;
 using StudentsAppSQL9Pro.DAO;
+using StudentsAppSQL9Pro.Services;
 
 namespace StudentsAppSQL9Pro
 {
@@ -26,6 +27,7 @@ namespace StudentsAppSQL9Pro
             builder.Services.AddScoped<DBHelper>();
 
             builder.Services.AddScoped<IStudentDAO, StudentDAOImpl>();
+            builder.Services.AddScoped<IStudentService, StudentServiceImpl>();
 
             var app = builder.Build();
 
